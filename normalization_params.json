@@ -1,0 +1,212 @@
+{
+    "bookstore_video0": {
+        "stopping_frequency": {
+            "median": 0.08333333333333333,
+            "iqr": 0.8333333333333334
+        },
+        "speed_variance": {
+            "median": 0.1873837852100006,
+            "iqr": 1.7327853499844332
+        },
+        "path_efficiency": {
+            "median": 0.01904727907291337,
+            "iqr": 0.12427124313340265
+        },
+        "turning_angle_variance": {
+            "median": 0.10928598217281896,
+            "iqr": 0.776068259453591
+        },
+        "local_hesitation": {
+            "median": 0.6249999999999911,
+            "iqr": 0.4734848484848515
+        },
+        "loop_backtrack": {
+            "median": 0.0,
+            "iqr": 1.0
+        },
+        "waiting_time": {
+            "median": 0.08333333333333215,
+            "iqr": 0.6363636363636254
+        }
+    },
+    "bookstore_video1": {
+        "stopping_frequency": {
+            "median": 0.0,
+            "iqr": 0.9166666666666666
+        },
+        "speed_variance": {
+            "median": 0.10487515018807941,
+            "iqr": 2.0712958656248546
+        },
+        "path_efficiency": {
+            "median": 0.009521776900720869,
+            "iqr": 0.11415452072350718
+        },
+        "turning_angle_variance": {
+            "median": 0.0629398539159458,
+            "iqr": 0.981111590297705
+        },
+        "local_hesitation": {
+            "median": 0.6249999999999911,
+            "iqr": 0.47348484848489025
+        },
+        "loop_backtrack": {
+            "median": 0.0,
+            "iqr": 1.0
+        },
+        "waiting_time": {
+            "median": 0.0,
+            "iqr": 0.8181818181818039
+        }
+    },
+    "bookstore_video2": {
+        "stopping_frequency": {
+            "median": 0.0,
+            "iqr": 0.9090909090909091
+        },
+        "speed_variance": {
+            "median": 0.03959351119914025,
+            "iqr": 2.068075130348516
+        },
+        "path_efficiency": {
+            "median": 0.008474834646705731,
+            "iqr": 0.02711497711036115
+        },
+        "turning_angle_variance": {
+            "median": 0.03394058323906615,
+            "iqr": 0.19047460801158583
+        },
+        "local_hesitation": {
+            "median": 0.6249999999999911,
+            "iqr": 0.47348484848485506
+        },
+        "loop_backtrack": {
+            "median": 0.0,
+            "iqr": 1.0
+        },
+        "waiting_time": {
+            "median": 0.0,
+            "iqr": 0.5833333333333666
+        }
+    },
+    "bookstore_video3": {
+        "stopping_frequency": {
+            "median": 0.0,
+            "iqr": 1.0
+        },
+        "speed_variance": {
+            "median": 0.015842730979666264,
+            "iqr": 0.07248981648520975
+        },
+        "path_efficiency": {
+            "median": 0.006696211965648513,
+            "iqr": 0.022286928241504578
+        },
+        "turning_angle_variance": {
+            "median": 0.020212685217706392,
+            "iqr": 0.03743343459389186
+        },
+        "local_hesitation": {
+            "median": 0.6250000000000355,
+            "iqr": 0.41666666666668534
+        },
+        "loop_backtrack": {
+            "median": 0.0,
+            "iqr": 1.0
+        },
+        "waiting_time": {
+            "median": 0.0,
+            "iqr": 1.0
+        }
+    },
+    "bookstore_video4": {
+        "stopping_frequency": {
+            "median": 0.0,
+            "iqr": 1.0
+        },
+        "speed_variance": {
+            "median": 0.04212016308745527,
+            "iqr": 0.11363999501736663
+        },
+        "path_efficiency": {
+            "median": 0.015740604303240813,
+            "iqr": 0.04387648447712017
+        },
+        "turning_angle_variance": {
+            "median": 0.034565693017601665,
+            "iqr": 0.07088122201140333
+        },
+        "local_hesitation": {
+            "median": 0.6249999999999948,
+            "iqr": 0.2651515151515303
+        },
+        "loop_backtrack": {
+            "median": 0.0,
+            "iqr": 1.0
+        },
+        "waiting_time": {
+            "median": 0.0,
+            "iqr": 1.0
+        }
+    },
+    "bookstore_video5": {
+        "stopping_frequency": {
+            "median": 0.0,
+            "iqr": 0.9166666666666666
+        },
+        "speed_variance": {
+            "median": 0.05191428845967412,
+            "iqr": 2.6585366862831363
+        },
+        "path_efficiency": {
+            "median": 0.008323797532313493,
+            "iqr": 0.0672899451595155
+        },
+        "turning_angle_variance": {
+            "median": 0.0397969980224093,
+            "iqr": 0.8604501238498417
+        },
+        "local_hesitation": {
+            "median": 0.625,
+            "iqr": 0.4734848484848755
+        },
+        "loop_backtrack": {
+            "median": 0.0,
+            "iqr": 1.0
+        },
+        "waiting_time": {
+            "median": 0.0,
+            "iqr": 0.8011363636364093
+        }
+    },
+    "bookstore_video6": {
+        "stopping_frequency": {
+            "median": 0.0,
+            "iqr": 0.3333333333333333
+        },
+        "speed_variance": {
+            "median": 0.03441491400340458,
+            "iqr": 0.4558637443846946
+        },
+        "path_efficiency": {
+            "median": 0.009970436313475828,
+            "iqr": 0.035352491632834715
+        },
+        "turning_angle_variance": {
+            "median": 0.03172885301798256,
+            "iqr": 0.3021734539210676
+        },
+        "local_hesitation": {
+            "median": 0.6249999999999911,
+            "iqr": 0.4166666666666583
+        },
+        "loop_backtrack": {
+            "median": 0.0,
+            "iqr": 1.0
+        },
+        "waiting_time": {
+            "median": 0.0,
+            "iqr": 0.24999999999999648
+        }
+    }
+}
