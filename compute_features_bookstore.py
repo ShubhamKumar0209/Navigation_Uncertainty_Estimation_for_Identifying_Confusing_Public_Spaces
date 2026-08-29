@@ -191,16 +191,17 @@ def robust_scale_features(df, features):
         for feat in features:
             val = group[feat].dropna()
             if len(val) == 0:
-                median, iqr = 0.0, 1.0
+                median, iqr_safe = 0.0, 1.0
             else:
                 median = np.median(val)
                 q75, q25 = np.percentile(val, [75, 25])
                 iqr = q75 - q25
                 if iqr == 0:
-                    iqr = 1.0
+                    print(f"WARNING: IQR is 0 for feature '{feat}' in scene '{scene_id}'. Using epsilon 1e-6 for scaling.")
+                iqr_safe = max(iqr, 1e-6)
             
-            scene_params[feat] = {'median': float(median), 'iqr': float(iqr)}
-            norm_group[feat + '_norm'] = (group[feat] - median) / iqr
+            scene_params[feat] = {'median': float(median), 'iqr': float(iqr_safe)}
+            norm_group[feat + '_norm'] = (group[feat] - median) / iqr_safe
             
         norm_params[scene_id] = scene_params
         normalized_dfs.append(norm_group)
@@ -294,6 +295,32 @@ def main():
             
     window_df.to_csv(output_file, index=False)
     print(f"\nSaved processed features to {output_file}")
+    
+    # Verification of scaling logic
+    print("\n--- Verification of IQR=0 scaling logic ---")
+    with open('normalization_params.json', 'r') as f:
+        params = json.load(f)
+        
+    sample_row = window_df.iloc[0]
+    sample_scene = sample_row['scene_id']
+    sample_feat = active_features[0]
+    
+    raw_val = sample_row[sample_feat]
+    norm_col_val = sample_row[sample_feat + '_norm']
+    
+    p_med = params[sample_scene][sample_feat]['median']
+    p_iqr = params[sample_scene][sample_feat]['iqr']
+    manual_norm = (raw_val - p_med) / p_iqr
+    
+    print(f"Sample Scene: {sample_scene} | Feature: {sample_feat}")
+    print(f"  JSON Median: {p_med:.6f} | JSON IQR: {p_iqr:.6f}")
+    print(f"  Raw Value: {raw_val:.6f}")
+    print(f"  Computed _norm in CSV: {norm_col_val:.6f}")
+    print(f"  Manually computed:    {manual_norm:.6f}")
+    if np.isclose(norm_col_val, manual_norm, equal_nan=True):
+        print("  -> SUCCESS: Match verified!")
+    else:
+        print("  -> ERROR: Mismatch detected!")
     
     # Summary
     print("\n--- Summary ---")

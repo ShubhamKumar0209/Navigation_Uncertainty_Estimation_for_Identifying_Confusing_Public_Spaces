@@ -20,3 +20,4 @@
 - Applied robust scaling (Median and IQR) independently per scene, saving parameters to `normalization_params.json` for reproducibility.
 - Computed initial Navigation Uncertainty Scores (`NUS_weak`) using two approaches: expert-weighted fusion and data-driven PCA (first principal component).
 - Exported all features, normalized values, and NUS estimates to `processed/bookstore/features_windows.csv`.
+- **Bugfix**: Addressed an edge case where features with an IQR of 0 (e.g., `loop_backtrack`, `stopping_frequency`) were skipping normalization; implemented a robust epsilon floor (`1e-6`) to enforce uniform scaling and strictly aligned CSV normalization with parameters saved in `normalization_params.json`.
