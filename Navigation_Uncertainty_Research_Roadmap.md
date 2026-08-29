@@ -172,6 +172,10 @@ Let positions in window w be p₁...p_k with timestamps t₁...t_k.
 
 9. **Waiting time (WT):** longest continuous low-speed run within the window, normalized by window length.
 
+**Additional named sub-signals worth computing explicitly (fold into TAV/LB above, or track separately for interpretability):**
+- **U-turn detection:** flag any turning angle > 150° as a discrete strong-reversal event — a classic "wrong way" indicator, cheap to compute and useful as a standalone explanation feature later (Part 9).
+- **Oscillation:** count zero-crossings of the heading-angle derivative within the window — captures back-and-forth movement in place, distinct from a single large backtrack (LB) or generally high turning variance (TAV).
+
 ### 4.2 Normalization
 
 Each raw component is normalized per-scene (not globally) via robust scaling: xₙₒᵣₘ = clip((x − median) / IQR, 0, 1), which is less sensitive to outlier trajectories (e.g., a person literally standing still to wait for a friend) than min-max scaling.
@@ -184,6 +188,7 @@ Two justifiable weighting approaches, both to be reported (for ablation, Part 10
 
 - **Equal/expert-prior weighting:** weights set from environmental-psychology literature emphasis (stopping and backtracking weighted highest, e.g., w_SF=w_LB=0.2, others 0.1–0.15) — transparent, reproducible, no circularity.
 - **PCA-derived weighting:** first principal component loadings across the 9 normalized features, interpreted as the dominant shared "uncertainty axis" — data-driven, but must be validated (loadings should be positive and roughly literature-consistent; if PC1 doesn't align with prior expectation, do not use it blindly).
+- **Entropy weighting (third option, worth including in the ablation):** weight each feature by how much it discriminates across the dataset — higher variance/entropy features get more weight. Data-driven and requires no manual tuning or PCA, and is well-established in multi-criteria decision-making literature. Caveat: it assumes high-variance features are meaningful signal rather than noise, so sanity-check the resulting weights the same way as the PCA loadings. A reasonable two-tier design: use entropy weighting to generate the initial automatic label (no manual labeling needed), then optionally refine weights via regression against the small human-rated validation subset (Section 4.5) if time allows.
 
 ### 4.4 Confound Control
 
@@ -197,6 +202,12 @@ Crowd density alone can *cause* slower speed and more stopping without confusion
 ### 4.6 Reproducibility
 
 All formulas are closed-form functions of (x, y, t) alone (no learned components), computed identically from a documented script with fixed thresholds/window sizes reported in an appendix — any researcher re-running the pipeline on the same preprocessed tracks obtains bit-identical pseudo-labels, satisfying reproducibility.
+
+### 4.7 Framing Statement (repeat in the thesis/paper and at defense)
+
+> The Navigation Uncertainty Index is a quantitative summary of *trajectory kinematic irregularity*. It is not a measurement of cognitive state, emotion, or psychological confusion, and no claim of mind-reading is made or implied. High scores indicate movement patterns statistically associated with wayfinding difficulty, not a diagnosis of the individual.
+
+This framing is what makes the weak-supervision label design defensible and publishable — every score in the project is a *movement irregularity index*, never a psychological claim. If a panel member pushes on ethics at viva, the load-bearing line to repeat is: *"We measure kinematic irregularity in movement, not psychological state — the model has no access to, and makes no claims about, what a pedestrian was thinking."*
 
 ---
 
@@ -301,7 +312,7 @@ Epochs: ~60-100 with early stopping on validation Huber loss (patience=10)
 2. **Spatial aggregation**: for every trajectory point falling in a cell, accumulate its window-level NUS (weighted by dwell time in that cell) into that cell's running statistics (mean, count, variance).
 3. **Heatmap smoothing**: Gaussian kernel density smoothing (σ ≈ 1–2 cells) to avoid sparse-cell noise, and normalize by pedestrian-count-in-cell so that low-traffic cells with a single confused pedestrian aren't visually equated with well-sampled genuinely-confusing zones (report both a smoothed mean-NUS heatmap and a sample-count heatmap side by side, so viewers can judge confidence).
 4. **Time aggregation**: allow filtering/aggregation by time-of-day or day-of-week if timestamps support it, to detect whether confusion is context-dependent (e.g., only during rush hour crowding).
-5. **Interactive visualization**: a web dashboard (Part 11/13) overlaying the heatmap on the scene's reference image/map, with click-to-inspect showing the top contributing trajectories and their explanation (Part 9) for that cell.
+5. **Interactive visualization**: a web dashboard (Part 11/13) overlaying the heatmap on the scene's reference image/map, with click-to-inspect showing the top contributing trajectories and their explanation (Part 9) for that cell. Use a **sequential colormap** (low = blue/green, high = red) rather than a diverging red/green scale, to avoid visually implying a "good/bad" binary on what is a continuous score.
 6. **Confusing-zone detection**: threshold the smoothed heatmap at a statistically justified cutoff (e.g., cells above the 90th percentile of mean-NUS **and** with sample count above a minimum-confidence threshold) to output a discrete list of flagged zones with bounding polygons for reporting purposes.
 
 ---
@@ -477,6 +488,15 @@ navigation-uncertainty/
 - Trained model checkpoints for SDD (+ inD/ETH-UCY where feasible) with reported metrics (Part 10).
 - Interactive dashboard demo (video walkthrough for viva if live deployment isn't feasible on defense day).
 - Draft paper (IEEE/Springer conference format) covering Parts 1–10 content, suitable for submission to a relevant workshop/conference.
+
+### 15.35 Limitations (Be Honest — include explicitly in the write-up)
+
+- **Dataset limitations:** SDD scenes are campus environments — findings may not generalize to airports, hospitals, or transit stations without new data.
+- **Weak supervision limitations:** the label is a proxy; a high NUS guarantees kinematic irregularity, not confusion. This must never be overstated in the write-up.
+- **Behavior ambiguity:** stopping/reversing can stem from social interaction, phone use, photography, or fatigue — the model cannot distinguish cause, only correlate pattern.
+- **Label quality:** since there's no independent ground truth, quantitative validation is inherently limited to proxy checks (the small manual-review subset, known-confusing-intersection sanity checks).
+- **False positives:** crowded but efficient spaces may trigger irregularity features (stopping due to crowding, not confusion) — density-normalization (Part 4.4) is a needed mitigation, not a solved problem.
+- **Ethics/privacy:** even with careful framing, any system inferring "confusion-like" states from surveillance-style trajectory data raises privacy/surveillance concerns that should be explicitly addressed in an ethics section. Recommendation: anonymized, aggregate-only outputs (heatmaps) in any real deployment — never expose per-individual "confusion scores."
 
 ### 15.4 Future Work
 
