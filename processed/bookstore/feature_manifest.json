@@ -1,0 +1,32 @@
+{
+    "GNN_INPUT_FEATURES": [
+        "speed_mean",
+        "acceleration_mean",
+        "acceleration_std",
+        "jerk_mean",
+        "heading_mean",
+        "angular_velocity_mean",
+        "deceleration_event_count",
+        "local_path_curvature",
+        "bounding_box_area",
+        "time_since_track_start",
+        "dwell_duration",
+        "nearest_neighbor_distance",
+        "local_pedestrian_density",
+        "relative_velocity_to_nearest",
+        "node_degree",
+        "node_centrality"
+    ],
+    "EXCLUDED_BUT_RETAINED": [
+        "speed_max",
+        "net_displacement",
+        "u_turn_count"
+    ],
+    "STUBBED_FEATURES": [
+        "nearest_neighbor_distance",
+        "local_pedestrian_density",
+        "relative_velocity_to_nearest",
+        "node_degree",
+        "node_centrality"
+    ]
+}

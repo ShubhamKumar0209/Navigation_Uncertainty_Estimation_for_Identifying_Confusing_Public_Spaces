@@ -22,7 +22,7 @@
         },
         "loop_backtrack": {
             "median": 0.0,
-            "iqr": 1e-06
+            "iqr": 1.0
         },
         "waiting_time": {
             "median": 0.08333333333333215,
@@ -52,7 +52,7 @@
         },
         "loop_backtrack": {
             "median": 0.0,
-            "iqr": 1e-06
+            "iqr": 1.0
         },
         "waiting_time": {
             "median": 0.0,
@@ -82,7 +82,7 @@
         },
         "loop_backtrack": {
             "median": 0.0,
-            "iqr": 1e-06
+            "iqr": 1.0
         },
         "waiting_time": {
             "median": 0.0,
@@ -92,7 +92,7 @@
     "bookstore_video3": {
         "stopping_frequency": {
             "median": 0.0,
-            "iqr": 1e-06
+            "iqr": 1.0
         },
         "speed_variance": {
             "median": 0.015842730979666264,
@@ -112,17 +112,17 @@
         },
         "loop_backtrack": {
             "median": 0.0,
-            "iqr": 1e-06
+            "iqr": 1.0
         },
         "waiting_time": {
             "median": 0.0,
-            "iqr": 1e-06
+            "iqr": 1.0
         }
     },
     "bookstore_video4": {
         "stopping_frequency": {
             "median": 0.0,
-            "iqr": 1e-06
+            "iqr": 1.0
         },
         "speed_variance": {
             "median": 0.04212016308745527,
@@ -142,11 +142,11 @@
         },
         "loop_backtrack": {
             "median": 0.0,
-            "iqr": 1e-06
+            "iqr": 1.0
         },
         "waiting_time": {
             "median": 0.0,
-            "iqr": 1e-06
+            "iqr": 1.0
         }
     },
     "bookstore_video5": {
@@ -172,7 +172,7 @@
         },
         "loop_backtrack": {
             "median": 0.0,
-            "iqr": 1e-06
+            "iqr": 1.0
         },
         "waiting_time": {
             "median": 0.0,
@@ -202,7 +202,7 @@
         },
         "loop_backtrack": {
             "median": 0.0,
-            "iqr": 1e-06
+            "iqr": 1.0
         },
         "waiting_time": {
             "median": 0.0,

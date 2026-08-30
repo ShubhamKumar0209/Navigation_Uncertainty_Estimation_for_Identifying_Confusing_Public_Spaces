@@ -196,12 +196,15 @@ def robust_scale_features(df, features):
                 median = np.median(val)
                 q75, q25 = np.percentile(val, [75, 25])
                 iqr = q75 - q25
-                if iqr == 0:
-                    print(f"WARNING: IQR is 0 for feature '{feat}' in scene '{scene_id}'. Using epsilon 1e-6 for scaling.")
-                iqr_safe = max(iqr, 1e-6)
+                if iqr <= 0.01:
+                    print(f"WARNING: IQR ({iqr:.4f}) is <= 0.01 for feature '{feat}' in scene '{scene_id}'. Using fallback IQR=1.0 for scaling.")
+                iqr_safe = iqr if iqr > 0.01 else 1.0
             
             scene_params[feat] = {'median': float(median), 'iqr': float(iqr_safe)}
-            norm_group[feat + '_norm'] = (group[feat] - median) / iqr_safe
+            
+            # Scale and clip to [-5, 5]
+            raw_scaled = (group[feat] - median) / iqr_safe
+            norm_group[feat + '_norm'] = np.clip(raw_scaled, -5, 5)
             
         norm_params[scene_id] = scene_params
         normalized_dfs.append(norm_group)
@@ -209,7 +212,17 @@ def robust_scale_features(df, features):
     with open('normalization_params.json', 'w') as f:
         json.dump(norm_params, f, indent=4)
         
-    return pd.concat(normalized_dfs, ignore_index=True)
+    normalized_df = pd.concat(normalized_dfs, ignore_index=True)
+    
+    # Print clipping stats globally
+    print("\n--- Clipping Stats ([-5, 5]) ---")
+    for feat in features:
+        raw_scaled = (normalized_df[feat] - normalized_df.apply(lambda row: norm_params[row['scene_id']][feat]['median'], axis=1)) / \
+                     normalized_df.apply(lambda row: norm_params[row['scene_id']][feat]['iqr'], axis=1)
+        clipped_count = np.sum((raw_scaled < -5) | (raw_scaled > 5))
+        print(f"  {feat:<25}: {clipped_count} values clipped")
+        
+    return normalized_df
 
 def compute_nus_weak(df, active_features):
     """
@@ -310,7 +323,7 @@ def main():
     
     p_med = params[sample_scene][sample_feat]['median']
     p_iqr = params[sample_scene][sample_feat]['iqr']
-    manual_norm = (raw_val - p_med) / p_iqr
+    manual_norm = np.clip((raw_val - p_med) / p_iqr, -5, 5)
     
     print(f"Sample Scene: {sample_scene} | Feature: {sample_feat}")
     print(f"  JSON Median: {p_med:.6f} | JSON IQR: {p_iqr:.6f}")
@@ -330,6 +343,9 @@ def main():
         print(f"  {feat:<25}: Min={window_df[feat].min():.4f}, Max={window_df[feat].max():.4f}, Mean={window_df[feat].mean():.4f}, Std={window_df[feat].std():.4f}")
         
     if not window_df[['NUS_weak_expert', 'NUS_weak_pca']].dropna().empty:
+        print("\nNUS_weak Distributions:")
+        print(f"  NUS_weak_expert : Min={window_df['NUS_weak_expert'].min():.4f}, Max={window_df['NUS_weak_expert'].max():.4f}, Mean={window_df['NUS_weak_expert'].mean():.4f}")
+        print(f"  NUS_weak_pca    : Min={window_df['NUS_weak_pca'].min():.4f}, Max={window_df['NUS_weak_pca'].max():.4f}, Mean={window_df['NUS_weak_pca'].mean():.4f}")
         corr = window_df['NUS_weak_expert'].corr(window_df['NUS_weak_pca'])
         print(f"\nCorrelation between NUS_weak_expert and NUS_weak_pca: {corr:.4f}")
     else:
