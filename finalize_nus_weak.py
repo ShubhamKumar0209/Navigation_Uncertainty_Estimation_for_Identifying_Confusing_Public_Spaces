@@ -1,4 +1,5 @@
 import os
+import glob
 import numpy as np
 import pandas as pd
 from sklearn.decomposition import PCA
@@ -18,9 +19,16 @@ NUS_WEAK_WEIGHTS = {
 def main():
     assert abs(sum(NUS_WEAK_WEIGHTS.values()) - 1.0) < 1e-6, "Weights must sum to 1.0"
     
-    input_file = os.path.join("processed", "bookstore", "features_windows_with_graph.csv")
-    print(f"Loading {input_file}...")
-    df = pd.read_csv(input_file)
+    input_files = glob.glob(os.path.join("processed_all", "*", "features_windows_with_graph.csv"))
+    if not input_files:
+        print("Error: No features_windows_with_graph.csv found in processed_all/*/")
+        return
+        
+    print(f"Loading {len(input_files)} feature files...")
+    dfs = []
+    for f in input_files:
+        dfs.append(pd.read_csv(f))
+    df = pd.concat(dfs, ignore_index=True)
     
     # Save old for comparison
     df['old_NUS_weak_expert'] = df['NUS_weak_expert'].copy()
@@ -91,13 +99,15 @@ def main():
             df[col + '_scaled'] = 0.0
             
     import json
-    param_file = os.path.join("processed", "bookstore", "nus_weak_scaling_params.json")
+    
+    os.makedirs(os.path.join("combined", "labels"), exist_ok=True)
+    param_file = os.path.join("combined", "labels", "nus_weak_scaling_params.json")
     with open(param_file, 'w') as f:
         json.dump(scaling_params, f, indent=4)
     print(f"Saved scaling params to {param_file}")
     
     # Save final results
-    out_file = os.path.join("processed", "bookstore", "features_final.csv")
+    out_file = os.path.join("combined", "labels", "features_final.csv")
     df.drop(columns=['old_NUS_weak_expert'], inplace=True, errors='ignore')
     df.to_csv(out_file, index=False)
     print(f"\nSaved finalized features to {out_file}")
@@ -118,9 +128,8 @@ def main():
     print(f"  Bottom 10% (<0.1): {bottom_10} windows ({bottom_10/total_valid*100:.1f}%)")
     
     # Load old dataset temporarily just to correlate safely in case row order shifted
-    old_expert = pd.read_csv(input_file)['NUS_weak_expert']
-    corr = valid_df['NUS_weak_expert'].corr(old_expert.loc[valid_df.index])
-    print(f"\nCorrelation between old and new NUS_weak_expert: {corr:.4f}")
+    # Skip correlation check for global dataset since we don't have a single old dataset to compare to.
+    print(f"\nTotal combined windows: {total_valid}")
 
 if __name__ == "__main__":
     main()

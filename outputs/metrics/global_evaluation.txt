@@ -1,0 +1,7 @@
+GLOBAL EVALUATION RESULTS
+=========================
+Test Huber: 0.0070
+Test MAE: 0.0897
+Test Spearman: 0.2594
+Best Epoch: 4
+Final Train/Val Huber Gap: -0.0016

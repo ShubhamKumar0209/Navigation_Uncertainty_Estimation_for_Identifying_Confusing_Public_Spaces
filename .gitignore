@@ -1,0 +1,22 @@
+# Datasets
+StanfordDroneDataset/
+bookstore/
+combined/
+processed/
+processed_all/
+models/
+
+# Large data files
+*.pt
+*.gpickle
+*.csv
+*.json
+
+# Patent documents
+*.docx
+*.pdf
+~$*
+
+# Environments and OS files
+.venv/
+.DS_Store

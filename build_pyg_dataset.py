@@ -8,16 +8,21 @@ import torch
 from torch_geometric.data import Data
 
 def load_data():
-    manifest_path = os.path.join("processed", "bookstore", "feature_manifest.json")
-    with open(manifest_path, 'r') as f:
+    manifest_paths = glob.glob(os.path.join("processed_all", "*", "feature_manifest.json"))
+    if not manifest_paths:
+        raise Exception("No feature_manifest.json found in processed_all/*/")
+    with open(manifest_paths[0], 'r') as f:
         manifest = json.load(f)
     gnn_features = manifest["GNN_INPUT_FEATURES"]
     
-    ff_path = os.path.join("processed", "bookstore", "features_final.csv")
+    ff_path = os.path.join("combined", "labels", "features_final.csv")
     targets_df = pd.read_csv(ff_path)
     
-    nf_path = os.path.join("processed", "bookstore", "node_features_with_graph.csv")
-    nodes_df = pd.read_csv(nf_path)
+    nf_paths = glob.glob(os.path.join("processed_all", "*", "node_features_with_graph.csv"))
+    nodes_dfs = []
+    for p in nf_paths:
+        nodes_dfs.append(pd.read_csv(p))
+    nodes_df = pd.concat(nodes_dfs, ignore_index=True)
     
     # Pre-cast IDs
     targets_df['scene_id'] = targets_df['scene_id'].astype(str)
@@ -42,8 +47,7 @@ def build_global_graphs(nodes_df, gnn_features):
     for (scene_id, agent_id), group in nodes_df.groupby(['scene_id', 'agent_id']):
         node_groups[(scene_id, agent_id)] = group.sort_values('window_start_time')
         
-    graphs_dir = os.path.join("processed", "bookstore", "graphs")
-    graph_files = glob.glob(os.path.join(graphs_dir, "*.gpickle"))
+    graph_files = glob.glob(os.path.join("processed_all", "*", "graphs", "*.gpickle"))
     
     global_data = {} # Key: global_window_id -> dict with 'data' (PyG Data), 'node_map', 'end_time'
     
@@ -185,7 +189,10 @@ def build_sequences(targets_df, global_data):
             'sequence': seq_data,
             'target_indices': torch.tensor(seq_node_idx, dtype=torch.long),
             'label': torch.tensor([target_val], dtype=torch.float),
-            'scene_id': scene_id
+            'scene_id': scene_id,
+            'agent_id': agent_id,
+            'window_start_time': row['window_start_time'],
+            'window_end_time': row['window_end_time']
         })
         
     print(f"  Assembled {len(dataset)} valid samples.")
@@ -199,7 +206,8 @@ def main():
     dataset = build_sequences(targets_df, global_data)
     
     # Save
-    out_file = os.path.join("processed", "bookstore", "dataset.pt")
+    os.makedirs(os.path.join("combined", "dataset"), exist_ok=True)
+    out_file = os.path.join("combined", "dataset", "dataset.pt")
     torch.save(dataset, out_file)
     print(f"\nSaved complete PyG dataset to {out_file}")
     

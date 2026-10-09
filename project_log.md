@@ -61,3 +61,5 @@
   - Rotation A (Test `video4`): Spearman $\rho \approx 0.00$, confirming it acts as a pathological hold-out.
   - Rotation B (Test `video6`): Spearman $\rho = 0.43$.
   - Rotation C (Test `video5`): Spearman $\rho = 0.56$, demonstrating strong generalizability when representative density distributions are maintained in the training set.
+
+
